@@ -72,16 +72,16 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             proxy: {
                 // 这里的意思是 以/api开头发送的请求都会被转发到 http://xxx:3000
                 [env.VITE_APP_API_BASEURL]: {
-                    target: 'http://xxx:9000',
+                    target: 'http://xxx:3000',
                     // 改变 Host Header
-                    changeOrigin: true,
+                    changeOrigin: true
                     // 如果后端请求没有这个 api 前缀，则发起请求时将 '/api' 替换为 ''
-                    rewrite: (path) => path.replace(/^\/api/, '')
+                    // rewrite: (path) => path.replace(/^\/api/, '')
                 },
                 [env.VITE_APP_MOCK_BASEURL]: {
-                    target: 'http://xxx:9000',
-                    changeOrigin: true,
-                    rewrite: (path) => path.replace(/^\/mock/, '')
+                    target: 'http://xxx:3000',
+                    changeOrigin: true
+                    // rewrite: (path) => path.replace(/^\/mock/, '')
                 }
             }
         },

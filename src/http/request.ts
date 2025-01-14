@@ -31,9 +31,9 @@ service.interceptors.request.use(
 
 // axios 实例拦截响应
 service.interceptors.response.use(
-    (response: AxiosResponse) => {
+    (response: AxiosResponse): any => {
         if (response.status === 200) {
-            return response.data;
+            return response;
         }
         ElMessage({
             message: getMessageInfo(response.status),
@@ -69,7 +69,7 @@ const requestInstance = <T = any>(config: AxiosRequestConfig): Promise<T> => {
         service.request<any, AxiosResponse<BaseResponse>>(conf).then((res: AxiosResponse<BaseResponse>) => {
             const data = res.data;
             // 如果data.code为错误代码返回message信息
-            if (data.code != 1) {
+            if (data.code != 0) {
                 ElMessage({
                     message: data.message,
                     type: 'error'

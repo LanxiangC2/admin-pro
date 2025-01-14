@@ -13,9 +13,11 @@ export const useUserStoreWithout = defineStore('user', {
     actions: {
         async storeUserLogin(data: LoginRequest) {
             const res = await userLogin(data);
+            console.log('res', res);
             this.username = res.username;
             this.roles = res.roles;
             this.accessToken = res.accessToken;
+            return res;
         },
         async stroeRefreshUserInfo() {
             if (this.username == 'lyric' && this.accessToken != '') {
@@ -36,7 +38,7 @@ export const useUserStoreWithout = defineStore('user', {
     persist: {
         key: 'userInfo',
         storage: sessionStorage,
-        pick: ['accessToken']
+        pick: ['accessToken', 'username', 'roles']
     }
 });
 

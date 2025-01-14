@@ -18,9 +18,9 @@ export type LoginResponse = {
 };
 
 export const userLogin = (data?: LoginRequest) => {
-    return post<LoginResponse>({}, '/api/login', data);
+    return post<LoginResponse>({}, '/login', data);
 };
 
 export const refreshUserData = async (data?: reLoginRequest) => {
-    return post<LoginResponse>({}, '/api/getUserInfo', data);
+    return post<LoginResponse>({}, '/getUserInfo', data);
 };
