@@ -91,8 +91,7 @@ export default [
             '.husky',
             '.local',
             '/bin',
-            'Dockerfile',
-            'eslint.config.js'
+            'Dockerfile'
         ]
     }
 ];
