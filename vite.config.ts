@@ -4,6 +4,15 @@ import { fileURLToPath } from 'url';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 
+import { viteMockServe } from 'vite-plugin-mock';
+
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import IconsResolver from 'unplugin-icons/resolver';
+import ElementPlus from 'unplugin-element-plus/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import Icons from 'unplugin-icons/vite';
+
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     // 获取当前工作目录
     const root = process.cwd();
@@ -20,7 +29,31 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             // Vue模板文件编译插件
             vue(),
             // jsx文件编译插件
-            vueJsx()
+            vueJsx(),
+            // 开启mock插件，开启后就可以在项目中模拟接口请求了
+            viteMockServe({
+                // 如果接口为 /mock/xxx 以 mock 开头就会被拦截响应配置的内容
+                mockPath: 'mock', // 数据模拟需要拦截的请求起始 URL
+                enable: true // 是否启用
+                // localEnabled: true, // 本地开发是否启用
+                // prodEnabled: false // 生产模式是否启用
+            }),
+            // 开启ElementPlus自动引入CSS
+            ElementPlus({}),
+            // 自动引入组件及ICON
+            AutoImport({
+                resolvers: [ElementPlusResolver(), IconsResolver()],
+                dts: fileURLToPath(new URL('./types/auto-imports.d.ts', import.meta.url))
+            }),
+            // 自动注册组件
+            Components({
+                resolvers: [IconsResolver(), ElementPlusResolver()],
+                dts: fileURLToPath(new URL('./types/components.d.ts', import.meta.url))
+            }),
+            // 自动安装图标
+            Icons({
+                autoInstall: true
+            })
         ],
         // 运行后本地预览的服务器
         server: {
@@ -38,12 +71,17 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             // 帮助我们开发时解决跨域问题
             proxy: {
                 // 这里的意思是 以/api开头发送的请求都会被转发到 http://xxx:3000
-                '/api': {
+                [env.VITE_APP_API_BASEURL]: {
                     target: 'http://xxx:9000',
                     // 改变 Host Header
                     changeOrigin: true,
-                    // 发起请求时将 '/api' 替换为 ''
+                    // 如果后端请求没有这个 api 前缀，则发起请求时将 '/api' 替换为 ''
                     rewrite: (path) => path.replace(/^\/api/, '')
+                },
+                [env.VITE_APP_MOCK_BASEURL]: {
+                    target: 'http://xxx:9000',
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/mock/, '')
                 }
             }
         },
