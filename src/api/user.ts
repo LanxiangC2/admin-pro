@@ -1,4 +1,5 @@
 import { post } from '@/http/request';
+import { BaseResponse } from '@/http/request';
 
 export type LoginRequest = {
     username: string;
@@ -18,9 +19,9 @@ export type LoginResponse = {
 };
 
 export const userLogin = (data?: LoginRequest) => {
-    return post<LoginResponse>({}, '/login', data);
+    return post<BaseResponse>({}, '/login', data);
 };
 
 export const refreshUserData = async (data?: reLoginRequest) => {
-    return post<LoginResponse>({}, '/getUserInfo', data);
+    return post<BaseResponse>({}, '/getUserInfo', data);
 };

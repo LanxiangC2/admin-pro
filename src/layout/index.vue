@@ -27,6 +27,7 @@ import { useRouter, useRoute } from 'vue-router';
 import Header from './components/Header.vue';
 const router = useRouter();
 const route = useRoute();
+
 const menuList = router.getRoutes().filter((route) => {
     return route.meta.isShow;
 });

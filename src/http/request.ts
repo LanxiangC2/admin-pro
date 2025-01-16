@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig, AxiosRequ
 import { ElMessage } from 'element-plus';
 import { getMessageInfo } from './status';
 
-interface BaseResponse<T = any> {
+export interface BaseResponse<T = any> {
     code: number | string;
     data: T;
     message: string;
@@ -81,7 +81,7 @@ const requestInstance = <T = any>(config: AxiosRequestConfig): Promise<T> => {
                     type: 'success'
                 });
                 // 此处返回data信息 也就是 api 中配置好的 Response类型
-                resolve(data.data as T);
+                resolve(data as T);
             }
         });
     });

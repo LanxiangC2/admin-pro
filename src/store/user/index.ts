@@ -14,9 +14,9 @@ export const useUserStoreWithout = defineStore('user', {
         async storeUserLogin(data: LoginRequest) {
             const res = await userLogin(data);
             console.log('res', res);
-            this.username = res.username;
-            this.roles = res.roles;
-            this.accessToken = res.accessToken;
+            this.username = res.data.username;
+            this.roles = res.data.roles;
+            this.accessToken = res.data.accessToken;
             return res;
         },
         async stroeRefreshUserInfo() {
@@ -25,9 +25,9 @@ export const useUserStoreWithout = defineStore('user', {
                     accessToken: this.accessToken
                 })
                     .then((res) => {
-                        this.username = res.username;
-                        this.roles = res.roles;
-                        this.accessToken = res.accessToken;
+                        this.username = res.data.username;
+                        this.roles = res.data.roles;
+                        this.accessToken = res.data.accessToken;
                     })
                     .catch(() => {
                         this.accessToken = '';
