@@ -16,6 +16,13 @@
                 </el-menu>
             </el-aside>
             <el-main>
+                <el-breadcrumb :separator-icon="ArrowRight">
+                    <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+                    <el-breadcrumb-item>promotion management</el-breadcrumb-item>
+                    <el-breadcrumb-item>promotion list</el-breadcrumb-item>
+                    <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+                </el-breadcrumb>
+
                 <router-view></router-view>
             </el-main>
         </el-container>
@@ -25,6 +32,8 @@
 <script lang="ts" setup>
 import { useRouter, useRoute } from 'vue-router';
 import Header from './components/Header.vue';
+import { ArrowRight } from '@element-plus/icons-vue';
+
 const router = useRouter();
 const route = useRoute();
 
@@ -45,5 +54,9 @@ const activeMenu = route.path;
     .el-menu {
         height: 100%;
     }
+}
+
+.el-breadcrumb {
+    margin-bottom: 10px;
 }
 </style>

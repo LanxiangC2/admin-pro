@@ -63,7 +63,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             // 自动注册组件
             Components({
                 resolvers: [IconsResolver(), ElementPlusResolver()],
-                dts: fileURLToPath(new URL('./types/components.d.ts', import.meta.url))
+                dts: fileURLToPath(new URL('./types/components.d.ts', import.meta.url)),
+                dirs: [fileURLToPath(new URL('./src/components/auto', import.meta.url))]
             }),
             // 自动安装图标
             Icons({

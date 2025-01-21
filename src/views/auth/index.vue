@@ -16,12 +16,10 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getAuthList } from '@/api/auth';
+import { IAuth } from '@/types/common';
+
 const route = useRoute();
-interface IAuth {
-    name: string; // 权限名称
-    roleId: number; // 角色ID
-    roleList?: IAuth[]; // 角色列表 子权限
-}
+
 const treeRef = ref<any>(null);
 let authList = ref<IAuth[]>([]);
 const checkedNode = ref<string[]>([]);
