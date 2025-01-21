@@ -14,7 +14,9 @@ import pluginVue from 'eslint-plugin-vue';
 import tseslint from 'typescript-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 // import eslintConfigPrettier from "eslint-config-prettier";
+import autoImportsConfig from './.eslintrc-auto-import.json' assert { type: 'json' };
 
+// const autoImportsConfig = () => import('./.eslintrc-auto-import.json', { assert: { type: 'json' } });
 export default [
     {
         files: ['**/*.{js,mjs,cjs,ts,vue}']
@@ -50,7 +52,9 @@ export default [
                 parser: tseslint.parser,
                 // 使用 ES 模块化规范
                 sourceType: 'module'
-            }
+            },
+            // vite.config.ts 中自动引入生成的文件
+            ...autoImportsConfig
         },
 
         // 自定义规则

@@ -1,27 +1,44 @@
-import { post } from '@/http/request';
-import { BaseResponse } from '@/http/request';
-
 export type LoginRequest = {
     username: string;
     password: string;
 };
-
 // 刷新登录信息需要的参数
 export type reLoginRequest = {
     accessToken: string;
 };
-
 export type LoginResponse = {
-    token?: string;
+    data: any;
     username: string;
-    accessToken: string;
     roles: string[];
+    accessToken: string;
 };
+// // 定义的接口
+// export const userLogin = async (data?: LoginRequest) => {
+//     return post<LoginResponse>({}, '/login', data);
+// };
 
-export const userLogin = (data?: LoginRequest) => {
-    return post<BaseResponse>({}, '/login', data);
-};
+// export const refreshUserInfo = async (data?: reLoginRequest) => {
+//     return post<LoginResponse>({}, '/getUserInfo', data);
+// };
+// // 获取所有的用户
+// export const getUserList = () => {
+//     return get({}, '/getUserList');
+// };
+import service from '@/http/request';
 
-export const refreshUserData = async (data?: reLoginRequest) => {
-    return post<BaseResponse>({}, '/getUserInfo', data);
-};
+export function userLogin(data: LoginRequest) {
+    return service({
+        url: '/login',
+        method: 'POST',
+        data
+    });
+}
+
+//  获取所有的用户
+export function getUserList(data) {
+    return service({
+        url: '/getUserList',
+        method: 'get',
+        data
+    });
+}

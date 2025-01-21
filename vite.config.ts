@@ -18,6 +18,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     const root = process.cwd();
     // 获取环境变量
     const env = loadEnv(mode, root);
+
     return {
         // 项目根目录
         root,
@@ -25,6 +26,14 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         base: './',
         publicDir: fileURLToPath(new URL('./public', import.meta.url)), // 无需处理的静态资源位置
         assetsInclude: fileURLToPath(new URL('./src/assets', import.meta.url)), // 需要处理的静态资源位置
+
+        css: {
+            preprocessorOptions: {
+                less: {
+                    additionalData: `@import "@/styles/variable.less";`
+                }
+            }
+        },
         plugins: [
             // Vue模板文件编译插件
             vue(),
@@ -42,6 +51,12 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             ElementPlus({}),
             // 自动引入组件及ICON
             AutoImport({
+                // 定义需要自动引入的框架
+                imports: ['vue', 'vue-router', 'pinia'],
+                // 处理 eslint, 记得还要去 eslint.config.js 中配置这个自动生成的 `.eslintrc-auto-import.json`规则
+                eslintrc: {
+                    enabled: true // Default `false`
+                },
                 resolvers: [ElementPlusResolver(), IconsResolver()],
                 dts: fileURLToPath(new URL('./types/auto-imports.d.ts', import.meta.url))
             }),

@@ -31,7 +31,6 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onMounted, computed, ref, watch } from 'vue';
 import { getProjectList } from '@/api/project';
 // 项目接口
 interface IProject {
@@ -77,7 +76,7 @@ const onSearchGoods = () => {
     searchData.dataCount = projectList.value.length;
 };
 const fetchData = () => {
-    getProjectList().then((res) => {
+    getProjectList({}).then((res) => {
         projectList.value = res.data;
         searchData.dataCount = res.data.length;
     });

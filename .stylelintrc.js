@@ -2,8 +2,8 @@ export default {
     // 继承推荐规范配置
     extends: [
         'stylelint-config-standard',
-        // 'stylelint-config-prettier,， // 暂时无法识别规则
-        'stylelint-config-recommended-scss',
+        // "stylelint-config-prettier",
+        'stylelint-config-recommended-less',
         'stylelint-config-standard-vue'
     ],
     // 添加规则插件
@@ -11,8 +11,8 @@ export default {
     // 不同格式的文件指定自定义语法
     overrides: [
         {
-            files: ['**/*.(scss|css|vue|html)'],
-            customSyntax: 'postcss-scss'
+            files: ['**/*.(less|css|vue|html)'],
+            customSyntax: 'postcss-less'
         },
         {
             files: ['**/*.(html|vue)'],
@@ -21,7 +21,6 @@ export default {
     ],
     // 忽略检测文件
     ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts', '**/*.json', '**/*.md', '**/*.yaml'],
-
     // 自定义配置规则
     rules: {
         // 便于配置变量 关闭未知属性检测
@@ -117,6 +116,8 @@ export default {
             'text-shadow',
             'resize',
             'transition'
-        ]
+        ],
+        'font-family-no-duplicate-names': null,
+        'no-duplicate-selectors': null
     }
 };
