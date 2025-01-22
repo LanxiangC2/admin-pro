@@ -3,8 +3,10 @@ import type { UserConfig, ConfigEnv } from 'vite';
 import { fileURLToPath } from 'url';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
+import externalGlobals from 'rollup-plugin-external-globals';
 
 import { viteMockServe } from 'vite-plugin-mock';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
@@ -12,6 +14,17 @@ import IconsResolver from 'unplugin-icons/resolver';
 import ElementPlus from 'unplugin-element-plus/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import Icons from 'unplugin-icons/vite';
+import VitePluginCompression from 'vite-plugin-compression';
+
+import BrCompress from 'rollup-plugin-brotli';
+import { createHtmlPlugin } from 'vite-plugin-html';
+
+const globals = externalGlobals({
+    moment: 'moment',
+    'video.js': 'videojs',
+    jspdf: 'jspdf',
+    xlsx: 'XLSX'
+});
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     // 获取当前工作目录
@@ -35,6 +48,27 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             }
         },
         plugins: [
+            // BrCompress({}),
+
+            createHtmlPlugin({
+                inject: {
+                    data: {
+                        monentscript:
+                            '<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.js"></script>',
+                        videoscript:
+                            '<script src="https://cdn.jsdelivr.net/npm/video.js@7.14.3/dist/video.min.js"></script>',
+                        echartscript: '<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/echarts"></script>',
+                        jspdfscript: '<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/pdf.js"></script>',
+                        xlsxscript:
+                            '<script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.4/dist/xlsx.full.min.js"></script>'
+                    }
+                }
+            }),
+            VitePluginCompression({
+                threshold: 1024 * 20, // 体积大于20kb的文件会被压缩
+                ext: '.gz', // 压缩文件后缀
+                algorithm: 'gzip' // 压缩算法
+            }),
             // Vue模板文件编译插件
             vue(),
             // jsx文件编译插件
@@ -107,19 +141,57 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             sourcemap: false,
             // 打包大小超出 400kb 提示警告
             chunkSizeWarningLimit: 400,
+
             rollupOptions: {
                 // 打包入口文件 根目录下的 index.html
                 // 也就是项目从哪个文件开始打包
                 input: {
                     index: fileURLToPath(new URL('./index.html', import.meta.url))
                 },
-                // 静态资源分类打包
+                plugins: [visualizer({ open: true })],
+                // experimentalLogSideEffects: true,
+
+                treeshake: {
+                    preset: 'recommended'
+                    // propertyReadSideEffects: true
+                },
+                external: ['moment', 'video.js', 'jspdf', 'xlsx', 'echarts'],
                 output: {
-                    format: 'esm',
+                    // 方式1 过多的 chunk
+                    // format: 'esm',
+                    // chunkFileNames: 'static/js/[name]-[hash].js',
+                    // entryFileNames: 'static/js/[name]-[hash].js',
+                    // assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+
+                    // 方式2 过大的chunk
+                    manualChunks: (id: string) => {
+                        if (id.includes('node_modules')) {
+                            return 'vendor';
+                        }
+
+                        if (id.includes('src/views/about')) {
+                            return 'about';
+                        }
+                        // 业务代码
+                        // return 'index';
+                    },
+
+                    // 方式3 折中的方式
+                    experimentalMinChunkSize: 20 * 1024, // 单位是 B
+
+                    // 其他的配置
+
                     chunkFileNames: 'static/js/[name]-[hash].js',
                     entryFileNames: 'static/js/[name]-[hash].js',
                     assetFileNames: 'static/[ext]/[name]-[hash].[ext]'
                 }
+                // 静态资源分类打包
+                // output: {
+                //     format: 'esm',
+                //     chunkFileNames: 'static/js/[name]-[hash].js',
+                //     entryFileNames: 'static/js/[name]-[hash].js',
+                //     assetFileNames: 'static/[ext]/[name]-[hash].[ext]'
+                // }
             }
         },
         // 配置别名
